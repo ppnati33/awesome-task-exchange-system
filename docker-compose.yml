@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  psql-db:
+    image: postgres
+    container_name: psql-db
+    restart: always
+    environment:
+      - POSTGRES_USER=auth-service
+      - POSTGRES_PASSWORD=nE5kMc7JCGNqwDQM
+      - POSTGRES_DB=auth-service-db
+    ports:
+      - '6432:5432'
+
+  auth-service:
+    container_name: auth-server
+    build:
+      context: ./spring-auth-server
+      dockerfile: Dockerfile
+    ports:
+      - '9000:9000'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-db:5432/auth-service-db
+      - SPRING_DATASOURCE_USERNAME=auth-service
+      - SPRING_DATASOURCE_PASSWORD=nE5kMc7JCGNqwDQM
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - psql-db
+
+  task-tracker-service:
+    container_name: task-tracker
+    build:
+      context: ./task-tracker
+      dockerfile: Dockerfile
+    ports:
+      - '8090:8090'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-db:5432/auth-service-db
+      - SPRING_DATASOURCE_USERNAME=auth-service
+      - SPRING_DATASOURCE_PASSWORD=nE5kMc7JCGNqwDQM
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - psql-db

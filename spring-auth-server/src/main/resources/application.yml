@@ -1,0 +1,42 @@
+server:
+  port: 9000
+
+spring:
+  security:
+    oauth2:
+      authorizationserver:
+        client:
+          client:
+            registration:
+              client-id: "client"
+              client-secret: "{noop}secret"
+              client-authentication-methods:
+                - "client_secret_basic"
+              authorization-grant-types:
+                - "authorization_code"
+                - "refresh_token"
+              redirect-uris:
+                - "http://test"
+              scopes:
+                - "openid"
+                - "profile"
+                - "user.read"
+                - "user.write"
+            require-authorization-consent: false
+  datasource:
+    url: jdbc:postgresql://192.168.99.100:5432/auth-service-db
+    username: auth-service
+    password: nE5kMc7JCGNqwDQM
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: TRACE
